@@ -9,6 +9,8 @@ public:
     ~TextEditor();
     bool initialize(SDL_Renderer* renderer);
     void handleEvent(const SDL_Event& event);
+    void renderCursor();
+    void renderText();
     void render();
 
 private:
@@ -16,4 +18,7 @@ private:
     SDL_Color textColor;
     TTF_Font* font;
     SDL_Renderer* renderer;
+    bool cursorVisible;
+    Uint32 cursorBlinkTimer;
+    const Uint32 cursorBlinkInterval = 500;
 };
