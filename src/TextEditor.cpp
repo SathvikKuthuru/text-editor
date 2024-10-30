@@ -28,11 +28,25 @@ void TextEditor::handleEvent(const SDL_Event& event) {
 }
 
 void TextEditor::render() {
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, inputText.c_str(), textColor);
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-    SDL_Rect textRect = {50, 50, textSurface->w, textSurface->h};
-    SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
+    // Render text
+    if (!inputText.empty()) {
+        SDL_Surface* textSurface = TTF_RenderText_Solid(font, inputText.c_str(), textColor);
+        if (textSurface) {
+            SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+            SDL_Rect textRect = {50, 50, textSurface->w, textSurface->h};
+            SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
 
-    SDL_FreeSurface(textSurface);
-    SDL_DestroyTexture(textTexture);
+            SDL_FreeSurface(textSurface);
+            SDL_DestroyTexture(textTexture);
+        } else {
+            std::cerr << "TTF_RenderText_Solid Error: " << TTF_GetError() << std::endl;
+        }
+    }
+
+    // Draw cursor
+    int cursorX = 50 + (inputText.empty() ? 0 : TTF_RenderText_Solid(font, inputText.c_str(), textColor)->w);
+    SDL_Rect cursorRect = {cursorX, 55, 2, 20}; // Adjust the height and width of the cursor as needed
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color for the cursor
+    SDL_RenderFillRect(renderer, &cursorRect);
 }
+
